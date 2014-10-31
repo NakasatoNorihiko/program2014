@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+void primelist(int[]);
+
+int main() 
+{
+    const int max;
+    int prime[max];
+
+    primelist(prime);
+
+    
