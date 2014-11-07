@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+int roman2num(char*);
+int main() 
+{
+    printf("XIV = %d\n", roman2num("XIV")); //14
+    printf("CDXCV = %d\n", roman2num("CDXCV")); //495
+    printf("MCMXLV = %d\n", roman2num("MCMXLV")); //1945
+    printf("MMMCMXCIX = %d\n", roman2num("MMMCMXCIX")); //3999
+    return 0;
+}
+

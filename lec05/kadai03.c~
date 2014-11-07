@@ -1,0 +1,15 @@
+#include <stdio.h>
+
+void reverse(char *s);
+int main() {
+    char s[] = “hello”;
+    reverse(s);
+    printf(“%s\n”,s); // 出力は“olleh” return 0;
+
+    return 0;
+}
+
+void reverse(char *s)
+{
+    
+}

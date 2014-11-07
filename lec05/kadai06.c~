@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <string.h>
+
+char* num2roman(int);
+int main() 
+{
+    printf("XIV = %d\n", roman2num("XIV")); //14
+    printf("CDXCV = %d\n", roman2num("CDXCV")); //495
+    printf("MCMXLV = %d\n", roman2num("MCMXLV")); //1945
+    printf("MMMCMXCIX = %d\n", roman2num("MMMCMXCIX")); //3999
+    return 0;
+}
+
+char* num2roman(int argn)
+{
+    int n = argn;               /* 引数は残しておく */
+    int len;                    /* 文字数の長さ */
+    int quo, rem;
+    char roman[20];
+    
+    while (n >= 10) {
+        if (n >= 1000) {
+            quo = n / 1000;
+            rem = n % 1000;
+            
+            
+
+
