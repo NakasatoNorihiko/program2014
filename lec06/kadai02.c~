@@ -1,0 +1,13 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+void inverse(double **A);
+
+int main(int argc, char *argv[])
+{
+}
+
+void inverse(double **A)
+{
+}

@@ -1,0 +1,13 @@
+#include <stdio.h>
+
+int main(int argc, char *argv[]) 
+{
+    double **A, **B;
+    int i;
+    int row, column;            /* 行の数、列の数 */
+    
+    for (
+    
+}
+
+
