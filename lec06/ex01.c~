@@ -1,0 +1,7 @@
+#include <stdio.h>
+
+int main(int argc, char *avgv[])
+{
+    int i;
+    printf("The number of arguments = %d\n", argc);
+    
