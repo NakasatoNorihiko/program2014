@@ -1,108 +1,188 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+typedef struct {
+  double **value;                 /* 数値 */
+  int row;                      /* 行の数 */
+  int column;                   /* 列の数 */
+} matrix_t;
+
+int s_strlen(char *);            /* 文字列の長さを測る関数 */
+void s_strcpy(char *, char *);   /* 文字列をコピーする関数 */
+char**  s_strcut(char *ori, char *cut, int *cutn); /* 文字列oriをcutに含まれる文字で切り分ける関数 datalenにdataの要素数を返す */
+void str2mat(char *ori, matrix_t *mat, char *row, char *column);
+matrix_t* pmat(matrix_t *, matrix_t *);
+void pdarray(double *, int);
+
 int main(int argc, char *argv[]) 
 {
-    double **A, **B, **C;
-    char tmp[10];
-    int i, j, k;
-    int row[2], column[2];            /* 行の数、列の数 */
-    int m, n;
+    int i;
+    matrix_t mat[2];            /* A, B*/
+    matrix_t *C;
+    int m;
 
-    for (i = 0; i < 2; i++){
-        row[i] = column[i] = 0;
-    }
-    
     for (i = 0; i < 2; i++) {
-        j = 0;
-        while(argv[i+1][j] != '\0') {
-            if (argv[i+1][j] == ',') {
-                column[i]++;
-            } else if (argv[i+1][j] == ':') {
-                row[i]++;
-            }
-            j++;
-        }
-        column[i] = (column[i] / 2) + 1;
+      str2mat(argv[i+1], &(mat[i]), ":", ",");
     }
 
-    A = (double**)malloc(sizeof(double*)*row[0]);
-    for (i = 0; i < row[0]; i++) {
-        A[i] = (double*)malloc(sizeof(double)*column[0]);
-    }
-    B = (double**)malloc(sizeof(double*)*row[1]);
-    for (i = 0; i < row[1]; i++) {
-        B[i] = (double*)malloc(sizeof(double)*column[1]);
-    }
-    C = (double**)malloc(sizeof(double*)*row[0]);
-    for (i = 0; i < row[0]; i++) {
-        C[i] = (double*)malloc(sizeof(double)*column[1]);
-    }
-    
+    C = pmat(&(mat[0]), &(mat[1]));
 
-    k = 0;
-    
     for (i = 0; i < 2; i++) {
-        m = n = 0;
-        j = 0;
-        while(argv[i+1][j] != '\0') {
-            while(argv[i+1][j] != ',' && argv[i+1][j] != ':') {
-                tmp[k] = argv[i+1][j];
-                j++;
-                k++;
-            }
-            tmp[k] = '\0';
-            if (i == 0) {
-                A[m][n] = atof(tmp);
-            } else {
-                B[m][n] = atof(tmp);
-            }
-            if (argv[i+1][j] == ',') {
-                n++;
-            } else if (argv[i+1][j] == ':') {
-                m++;
-                n = 0;
-            }
-            k = 0;
-            j++;
-            strcpy(tmp, "");
-        }
+      if (i == 0) {
+        printf("A=\n");
+      } else if (i == 1){
+        printf("B=\n");
+      } 
+      for (m = 0; m < mat[i].row; m++) {
+        pdarray((mat[i].value)[m], mat[i].column);
+      }
     }
-
-    for (m = 0; m < row[0]; m++) {
-        for (k = 0; k < column[1]; k++) {
-            C[m][k] = 0;
-        }
+    printf("A*B=\n");
+    for (m = 0; m < C->row; m++) {
+      pdarray((C->value)[m], C->column);
     }
-    for (m = 0; m < row[0]; m++) {
-        for (n = 0; n < column[0]; n++) {
-            for (k = 0; k < column[1]; k++) {
-                C[m][k] += A[m][n] * B[n][k];
-            }
-        }
-    }
-    
-    for (i = 0; i < 2; i++) {
-        for (m = 0; m < row[i]; m++) {
-            for (n = 0; n < column[i]; n++) {
-                if (i == 0) {
-                    printf("%lf ", A[m][n]);
-                } else {
-                    printf("%lf ", B[m][n]);
-                }
-            }
-            printf("\n");
-        }
-    }
-    for (m = 0; m < row[0]; m++) {
-        for (k = 0; k < column[1]; k++) {
-            printf("%lf ", C[m][k]);
-        }
-        printf("\n");
-    }
-    
-
     return 0;
 }
 
+int s_strlen(char *str)
+{
+  int len = 0;
+  while(str[len] != '\0') {
+    len++;
+  }
+  return len;
+}
 
+void s_strcpy(char *str1, char *str2)
+{
+  int len;
+  int i;
+  len = s_strlen(str2);
+  for (i = 0; i <= len; i++) {
+    str1[i] = str2[i];
+  }
+  return;
+}
+
+/* 文字列oriをcutに含まれる文字で切り分ける関数 datalenにdataの要素数を返す */
+char** s_strcut(char *ori, char *cut, int *datalen) {
+  int i, j, k, n;
+  char **data;
+  int orilen = s_strlen(ori);
+  int cutn = s_strlen(cut);
+  char tmp[1000];
+  int state;
+
+  *datalen = 1;                  /* 何個に分割されるかを示す */
+  n = 0;
+  for(i = 0; i < orilen; i++) {
+    for (j = 0; j < cutn; j++) {
+      if (ori[i] == cut[j]) {
+        (*datalen)++;
+      }
+    }
+  }
+  data = (char **)malloc(sizeof(char*)*(*datalen));
+
+  k = 0;
+  for (i = 0; i <= orilen; i++) {
+    state = 0;
+    for (j = 0; j < cutn; j++) {
+      if (ori[i] == '\0') {
+        state = 1;
+     } else if (ori[i] == cut[j]) {
+        state = 1;
+      }
+    }
+    if (state == 1){
+      tmp[k] = '\0';
+      data[n] = (char*)malloc(sizeof(char) * (k+1));
+      s_strcpy(data[n], tmp);
+      k = 0;
+      n++;
+    } else {
+      tmp[k] = ori[i];
+      k++;
+    }
+  }
+
+  return data;
+}
+
+/* 文字列oriと区切り規則row, columnを元に行列を作りdouble**を返す。*matに行列の大きさを返す */
+void str2mat(char *ori, matrix_t *mat, char *row, char *column) {
+  char ***cmat;                 /* doubleにする直前の行列 */
+  char **crowmat;              /* 列が区切られていない文字列 */
+  double **matrix;
+  int i, j;
+
+  crowmat = s_strcut(ori, row, &(mat->row));
+  (mat->row)--;
+  cmat = (char***)malloc(sizeof(char**)*(mat->row));
+  for (i = 0; i < mat->row; i++) {
+    cmat[i] = s_strcut(crowmat[i], column, &(mat->column));
+  }
+
+  matrix = (double**)malloc(sizeof(double*)*(mat->row));
+  for (i = 0; i < mat->row; i++) {
+    matrix[i] = (double*)malloc(sizeof(double)*(mat->column));
+  }
+  
+  for (i = 0; i < mat->row; i++) {
+    for (j = 0; j < mat->column; j++) {
+      matrix[i][j] = atof(cmat[i][j]);
+    }
+  }
+
+  mat->value = matrix;
+  free(cmat);
+  free(crowmat);
+
+  return;
+}
+
+matrix_t* pmat(matrix_t *A, matrix_t *B)
+{
+  matrix_t *C;
+  C = (matrix_t*)malloc(sizeof(matrix_t));
+  int i, m, k, n;
+  if (A->column != B->row) {
+    printf("Aの列数とBの行数が一致していません\n");
+    return NULL;
+  } else {
+    C->value = (double**)malloc(sizeof(double*)*(A->row));
+    for (i = 0; i < A->row; i++) {
+      (C->value)[i] = (double*)malloc(sizeof(double)*(B->column));
+    }
+    for (m = 0; m < A->row; m++) {
+      for (k = 0; k < B->column; k++) {
+        (C->value)[m][k] = 0;
+      }
+    }
+    for (m = 0; m < A->row; m++) {
+      for (n = 0; n < A->column; n++) {
+        for (k = 0; k < B->column; k++) {
+          (C->value)[m][k] += (A->value)[m][n] * (B->value)[n][k];
+        }
+      }
+    }
+    C->row = A->row;
+    C->column = B->column;
+  }
+  return C;
+}
+
+void pdarray(double *array, int n) {
+  int i;
+  printf("[");
+  for (i = 0; i < n; i++) {
+    printf("%lf", array[i]);
+    if (i != n-1) {
+      printf(",");
+    } else {
+      printf("]\n");
+    }
+  }
+  return;
+}
