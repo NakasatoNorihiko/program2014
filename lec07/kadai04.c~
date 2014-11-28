@@ -1,0 +1,14 @@
+#include <stdio.h>
+#define N 100
+
+int random_integer(int);
+
+int main()
+{
+    
+}
+
+int random_integer(int m) 
+{
+    return xorshift() % m;
+}

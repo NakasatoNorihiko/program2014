@@ -1,0 +1,17 @@
+#include <stdio.h>
+
+int main() 
+{
+    int cards[52];              /* cards[0]-[12]をダイヤとする */
+    double prob;
+    int dian, diaboxn;
+    dian = diaboxn = 0;
+
+    for (i = 0; i < N; i++) {
+        
+    }
+    
+
+            
+    
+}

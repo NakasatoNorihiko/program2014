@@ -1,0 +1,30 @@
+#include <stdio.h>
+#define MAX 100000
+
+int random_integer(int);
+
+int main()
+{
+    double prob;
+
+    for 
+}
+
+unsigned int xorshift() 
+{
+    static unsigned int x = 1;;
+    static unsigned int y = 2;
+    static unsigned int z = 3;
+    static unsigned int w = 4;
+    unsigned int t;
+    t = x ^ (x << 11);
+    x = y;
+    y = z;
+    z = w;
+    return w = (w^ (w>>19)) ^ (t ^ (t >> 8));
+}
+
+int random_integer(int m) 
+{
+    return xorshift() % m;
+}
