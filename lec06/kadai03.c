@@ -4,17 +4,14 @@
 
 int s_strlen(char *);            /* 文字列の長さを測る関数 */
 void s_strcpy(char *, char *);   /* 文字列をコピーする関数 */
-char**  s_strcut(char *ori, char *cut, int *cutn); /* 文字列oriをcutに含まれる文字で切り分けて、dataに入れる関数 datalenにdataの要素数を返す */
+char**  s_strcut(char *ori, char *cut, int *cutn); /* 文字列oriをcutに含まれる文字で切り分ける関数 datalenにdataの要素数を返す */
 
 int main(int argc, char *argv[]) 
 {
     char **mon;
 
     int monn;                 /* monnは単項式の数 */
-    int i,j; 
-    int len;
-
-    len = s_strlen(argv[1]);
+    int i,j;
     
     mon = s_strcut(argv[1], "+-", &monn);
     
@@ -29,6 +26,7 @@ int main(int argc, char *argv[])
     for (i = 0; i < monn; i++) {
         printf("Monomial %d = %s\n", i+1, mon[i]);
     }
+    free(mon);
     return 0;
 }
 
@@ -52,7 +50,7 @@ void s_strcpy(char *str1, char *str2)
   return;
 }
 
-/* 文字列oriをcutに含まれる文字で切り分けて、dataに入れる関数 datalenにdataの要素数を返す */
+/* 文字列oriをcutに含まれる文字で切り分ける関数 datalenにdataの要素数を返す */
 char** s_strcut(char *ori, char *cut, int *datalen) {
   int i, j, k, n;
   char **data;
@@ -65,7 +63,7 @@ char** s_strcut(char *ori, char *cut, int *datalen) {
   n = 0;
   for(i = 0; i < orilen; i++) {
     for (j = 0; j < cutn; j++) {
-      if (ori[i] == cut[j]) {
+      if (ori[i] == cut[j] && i != 0) {
         (*datalen)++;
       }
     }
@@ -82,7 +80,7 @@ char** s_strcut(char *ori, char *cut, int *datalen) {
         state = 1;
       }
     }
-    if (state == 1){
+    if (state == 1 && i != 0){
       tmp[k] = '\0';
       data[n] = (char*)malloc(sizeof(char) * (k+1));
       s_strcpy(data[n], tmp);

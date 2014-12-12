@@ -1,81 +1,58 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#define MAX_LEN 100
-#define MAX_LINE 15000
 
 char**  s_strcut(char *ori, char *cut, int *datalen); /* 文字列oriをcutに含まれる文字で切り分ける関数 datallenにdataの要素数を返す */
 int s_strlen(char *);
 void s_strcpy(char *, char *);
-    
-typedef struct person_s
-{
-    char name[20];
-    int age;
-    double weight;
-    double height;
-    struct person_s *next;
-} person;
 
-person* construct_person(char name[20], int age, double weight, double height, person *previous)
+/* 単項式の定義 */
+typedef struct monomial 
 {
-    person* ret = (person *)malloc(sizeof(person));
-    strcpy(ret->name, name);
-    ret->age = age;
-    ret->weight = weight;
-    ret->height = height;
-    ret->next = NULL;
+    int c;
+    int n;
+} mono;
+
+/* 単項式をつくる関数 */
+mono* construct_monomial(int c, int n)
+{
+    mono *ret = (mono*)malloc(sizeof(mono));
+    ret->c = c;
+    ret->n = n;
     return ret;
 }
 
-void print_person(person* p) 
+/* a*x^b　の形式の文字列を mono*形式に進化 */
+mono* transform_to_monomial(char *string)
 {
-    printf("name: %s\nage: %d\nweight: %lf\nheight: %lf\n", p->name, p->age, p->weight, p->height);
+  char cut[] = {'*', '^'};
+  int len;
+  char **buffer;
+  buffer = s_strcut(string, cut, &len);
+  mono *ret = construct_monomial(atoi(buffer[0]), atoi(buffer[2]));
+  return ret;
 }
 
-/* 最初のメンバ*p, 表示する人数n */
-void print_many_person(person *p, int n) 
+/* 単項式を微分する関数 */
+void diff_monomial(mono *m) 
 {
-    int i;
-    person *print = p;
-    for (i = 0; i < n; i++) {
-        print_person(print);
-        print = print->next;
-    }
-    printf("\n");
+    m->c = (m->n)*(m->c);
+    m->n = m->n - 1;
+}
+
+void print_monomial(mono *m)
+{
+    printf("%d*x^%d\n", m->c, m->n);
 }
 
 int main(int argc, char *argv[])
 {
-    int len = 0;
-    
-    char cut[1] = {','};
-    char **buf;
-    char buffer[MAX_LEN];
-    FILE *fp;
-    person *current, *first;
-    int dlen;                   /* s_strlenの変数datelenを満たすだけの変数、意味はない */
+  mono *m1 = transform_to_monomial(argv[1]);
 
-    if ((fp = fopen(argv[1], "r")) == NULL) {
-        fprintf(stderr, "Failed to open the file\n");
-        return 1;
-    }
+  printf("Diff: ");
+  diff_monomial(m1);
+  print_monomial(m1);
 
-    len = 0;
-    while(fgets(buffer, MAX_LEN, fp) != NULL) {
-        buf = s_strcut(buffer, cut, &dlen);
-        if (len == 0) {
-            current = construct_person(buf[0], atoi(buf[1]), atof(buf[3]), atof(buf[2]), NULL);
-            first = current;
-        } else {
-            current->next = construct_person(buf[0], atoi(buf[1]), atof(buf[3]), atof(buf[2]), current);
-            current = current->next;
-        }
-        len++;
-        free(buf);
-    }
-    print_many_person(first, 5);
-    return 0;
+  return 0;
 }
 
 int s_strlen(char *str)

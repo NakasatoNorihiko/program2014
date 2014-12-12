@@ -7,6 +7,7 @@
 */
 double harmonic(int n) {
   int i;
+  
   double sum = 0.0;
   for (i = 1;i <= n;i++) {
       sum += 1 / (double)i;

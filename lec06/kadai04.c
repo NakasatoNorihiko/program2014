@@ -17,32 +17,32 @@ void pdarray(double *, int);
 
 int main(int argc, char *argv[]) 
 {
-    int i;
-    matrix_t mat[2];            /* A, B*/
-    matrix_t *C;
-    int m;
+  int i;
+  matrix_t mat[2];            /* A, B*/
+  matrix_t *C;
+  int m;
 
-    for (i = 0; i < 2; i++) {
-      str2mat(argv[i+1], &(mat[i]), ":", ",");
-    }
+  for (i = 0; i < 2; i++) {
+    str2mat(argv[i+1], &(mat[i]), ":", ",");
+  }
 
-    C = pmat(&(mat[0]), &(mat[1]));
+  C = pmat(&(mat[0]), &(mat[1]));
 
-    for (i = 0; i < 2; i++) {
-      if (i == 0) {
-        printf("A=\n");
-      } else if (i == 1){
-        printf("B=\n");
-      } 
-      for (m = 0; m < mat[i].row; m++) {
-        pdarray((mat[i].value)[m], mat[i].column);
-      }
+  for (i = 0; i < 2; i++) {
+    if (i == 0) {
+      printf("A=\n");
+    } else if (i == 1){
+      printf("B=\n");
+    } 
+    for (m = 0; m < mat[i].row; m++) {
+      pdarray((mat[i].value)[m], mat[i].column);
     }
-    printf("A*B=\n");
-    for (m = 0; m < C->row; m++) {
-      pdarray((C->value)[m], C->column);
-    }
-    return 0;
+  }
+  printf("A*B=\n");
+  for (m = 0; m < C->row; m++) {
+    pdarray((C->value)[m], C->column);
+  }
+  return 0;
 }
 
 int s_strlen(char *str)
@@ -91,7 +91,7 @@ char** s_strcut(char *ori, char *cut, int *datalen) {
     for (j = 0; j < cutn; j++) {
       if (ori[i] == '\0') {
         state = 1;
-     } else if (ori[i] == cut[j]) {
+      } else if (ori[i] == cut[j]) {
         state = 1;
       }
     }
