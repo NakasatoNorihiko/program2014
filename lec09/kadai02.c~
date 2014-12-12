@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+typedef struct 
+{
+    char name[20];
+    int age;
+    double weight;
+    double height;
+    struct person *next;
+} person;
+
+    
