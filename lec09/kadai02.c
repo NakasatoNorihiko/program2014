@@ -25,9 +25,9 @@ person* construct_person(char name[20], int age, double weight, double height, p
     ret->weight = weight;
     ret->height = height;
     ret->next = NULL;
-    if (previous != NULL) {
-        previous->next = ret;   /* 前のpersonを作ったpersonに連結する */
-    }
+    /* if (previous != NULL) { */
+    /*     previous->next = ret;   /\* 前のpersonを作ったpersonに連結する *\/ */
+    /* } */
     return ret;
 }
 
@@ -36,17 +36,27 @@ void print_person(person* p)
     printf("name: %s\nage: %d\nweight: %lf\nheight: %lf\n", p->name, p->age, p->weight, p->height);
 }
 
+/* 最初のメンバ*p, 表示する人数n */
+void print_many_person(person *p, int n) 
+{
+    int i;
+    person *print = p;
+    for (i = 0; i < n; i++) {
+        print_person(print);
+        print = print->next;
+    }
+    printf("\n");
+}
 
 int main(int argc, char *argv[])
 {
     int len = 0;
-    int i;
     
     char cut[1] = {','};
     char **buf;
     char buffer[MAX_LEN];
     FILE *fp;
-    person* p[MAX_LINE];
+    person *current, *first;
     int dlen;                   /* s_strlenの変数datelenを満たすだけの変数、意味はない */
 
     if ((fp = fopen(argv[1], "r")) == NULL) {
@@ -58,18 +68,16 @@ int main(int argc, char *argv[])
     while(fgets(buffer, MAX_LEN, fp) != NULL) {
         buf = s_strcut(buffer, cut, &dlen);
         if (len == 0) {
-            p[len] = construct_person(buf[0], atoi(buf[1]), atof(buf[3]), atof(buf[2]), NULL);
+            current = construct_person(buf[0], atoi(buf[1]), atof(buf[3]), atof(buf[2]), NULL);
+            first = current;
         } else {
-            p[len] = construct_person(buf[0], atoi(buf[1]), atof(buf[3]), atof(buf[2]), p[len-1]);
+            current->next = construct_person(buf[0], atoi(buf[1]), atof(buf[3]), atof(buf[2]), current);
+            current = current->next;
         }
         len++;
         free(buf);
     }
-
-    for (i = 0; i < 10; i++) {
-        print_person(p[i]);
-    }
-
+    print_many_person(first, 5);
     return 0;
 }
 

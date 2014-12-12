@@ -27,7 +27,7 @@ person* construct_person(char name[20], int age, double weight, double height, p
     ret->height = height;
     ret->next = NULL;
     if (previous != NULL) {   /* 前が存在したら */
-        previous->next = ret;   /* 前のpersonを作ったpersonに連結する */
+        /* previous->next = ret;   /\* 前のpersonを作ったpersonに連結する *\/ */
         ret->previous = previous;
     } else {
         ret->previous = NULL;
@@ -54,20 +54,20 @@ void print_many_person(person *p, int n)
     
 void delete_person(person *h, char *s)
 {
-    person *d = h;
+    person *c = h;
     do {
-        if (strcmp(d->name, s) == 0) {
-            print_person(d);
+        if (strcmp(c->name, s) == 0) {
+            print_person(c);
             printf("was deleted.\n");
-            if (d->previous != NULL) {
-                (d->previous)->next = d->next;
+            if (c->previous != NULL) {
+                (c->previous)->next = c->next;
             }
-            if (d->next != NULL) {
-                (d->next)->previous = d->previous;
+            if (c->next != NULL) {
+                (c->next)->previous = c->previous;
             }
         }
-        d = d->next;
-    } while (d != NULL);
+        c = c->next;
+    } while (c != NULL);
     printf("\n");
 }
 
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     char **buf;
     char buffer[MAX_LEN];
     FILE *fp;
-    person* p[MAX_LINE];
+    person *current, *first;
     int dlen;                   /* s_strlenの変数datelenを満たすだけの変数、意味はない */
 
     if ((fp = fopen(argv[1], "r")) == NULL) {
@@ -91,17 +91,19 @@ int main(int argc, char *argv[])
     while(fgets(buffer, MAX_LEN, fp) != NULL) {
         buf = s_strcut(buffer, cut, &dlen);
         if (len == 0) {
-            p[len] = construct_person(buf[0], atoi(buf[1]), atof(buf[3]), atof(buf[2]), NULL);
+          current = construct_person(buf[0], atoi(buf[1]), atof(buf[3]), atof(buf[2]), NULL);
+          first = current;
         } else {
-            p[len] = construct_person(buf[0], atoi(buf[1]), atof(buf[3]), atof(buf[2]), p[len-1]);
+          current->next = construct_person(buf[0], atoi(buf[1]), atof(buf[3]), atof(buf[2]), current);
+          current = current->next;
         }
         len++;
         free(buf);
     }
 
-    print_many_person(p[0], 5);
-    delete_person(p[0],argv[2]);
-    print_many_person(p[0], 5);
+    print_many_person(first, 5);
+    delete_person(first,argv[2]);
+    print_many_person(first, 5);
 
     return 0;
 }
