@@ -5,10 +5,11 @@
 #define HASHSIZE 1000
 #define MAX_FILENAME 1000
 #define BUFSIZE 1000
+#define NAMESIZE 30
 
 typedef struct Member_tag
 {
-    char name[20];
+    char name[NAMESIZE];
     int age;
     double height;
     double weight;
@@ -27,13 +28,18 @@ int main(int argc, char *argv[])
     char filename[MAX_FILENAME];
     FILE *fp;
     char buf[BUFSIZE];
-    
+    char bufname[NAMESIZE];
+
+    if (argc == 1) {
+      fprintf(stderr, "error: you have to enter an argument\nex) ./kadai01 namelist.txt");
+      return 0;
+    }
     strcpy(filename, argv[1]);
-    
     if ((fp = fopen(filename, "r")) == NULL) {
         fprintf(stderr, "error: cannot open %s.\n", filename);
     }
 
+    /* root_arrayに入力ファイルのデータを格納していく */
     while(fgets(buf, BUFSIZE, fp)){
         char *name = strtok(buf, ",");
         int age = atoi(strtok(NULL, ","));
@@ -41,29 +47,31 @@ int main(int argc, char *argv[])
         double weight = atof(strtok(NULL, ","));
         root_array[hash(name)] = add_array(root_array,name, age, height, weight);
     }
-    
+
+    /* 名前を標準入力から検索する */
     printf("> ");
-    while(fgets(buf, BUFSIZE, stdin)){
+    while(fgets(bufname, BUFSIZE, stdin)){
         Member *tmp;
-        if ((tmp = search_array(root_array, buf)) != NULL) {
+        bufname[strlen(bufname)-1] = '\0';
+        if ((tmp = search_array(root_array, bufname)) != NULL) {
             printf("name %s\nage %d\nheight %lf\nweight %lf\n", tmp->name, tmp->age, tmp->height, tmp->weight);
         } else {
-            printf("name %s is not found.\n", buf);
+            printf("name %s is not found.\n", bufname);
         }
+        printf("> ");
     }
     return 0;
 }
 
-Member *search_array(Member *array[], char name[BUFSIZE])
+Member *search_array(Member *array[], char name[NAMESIZE])
 {
     Member *p;
-    for (p = array[hash(name)]; strcmp(name, p->name) != 0 && p != NULL;  p = p->next) {
-    }
-    if (p == NULL){
+    for (p = array[hash(name)]; strcmp(name, p->name) != 0;  p = p->next) {
+      if (p->next == NULL) {
         return NULL;
-    } else {
-        return p;
+      }
     }
+    return p;
 }
 
 Member* add_array(Member *root_array[], char *name, int age, double height, double weight)
@@ -95,7 +103,7 @@ Member* construct_member(char *name, int age, double height, double weight, Memb
 int hash(char s[BUFSIZE])
 {
     unsigned int val;
-    int i;
+    int i = 0;
     for (val = 0; s[i] != '\0'; i++) {
         val = s[i] + (31*val);
     }
