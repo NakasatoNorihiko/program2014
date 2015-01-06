@@ -1,0 +1,238 @@
+This is e-pTeX, Version 3.1415926-p3.4-110825-2.6 (utf8.euc) (TeX Live 2013) (format=platex 2014.8.17)  6 JAN 2015 23:56
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**midreport
+(./midreport.tex
+pLaTeX2e <2006/11/10> (based on LaTeX2e <2011/06/27> patch level 0)
+Babel <3.9f> and hyphenation patterns for 78 languages loaded.
+
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/platex/jsclasses/jsa
+rticle.cls
+Document Class: jsarticle 2013/05/14 okumura
+LaTeX Info: Redefining \rmfamily on input line 332.
+LaTeX Info: Redefining \sffamily on input line 335.
+LaTeX Info: Redefining \ttfamily on input line 338.
+\symmincho=\mathgroup4
+LaTeX Font Info:    Overwriting symbol font `mincho' in version `bold'
+(Font)                  JY1/mc/m/n --> JY1/gt/m/n on input line 403.
+LaTeX Font Info:    Font shape `JT1/mc/m/n' will be
+(Font)              scaled to size 9.60999pt on input line 593.
+LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
+(Font)              scaled to size 9.60999pt on input line 593.
+\fullwidth=\dimen118
+LaTeX Font Info:    Font shape `JT1/mc/m/n' will be
+(Font)              scaled to size 7.68799pt on input line 740.
+LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
+(Font)              scaled to size 7.68799pt on input line 740.
+\c@part=\count81
+\c@section=\count82
+\c@subsection=\count83
+\c@subsubsection=\count84
+\c@paragraph=\count85
+\c@subparagraph=\count86
+\@abstractbox=\box41
+\c@figure=\count87
+\c@table=\count88
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\@lnumwidth=\dimen119
+\bibindent=\dimen120
+LaTeX Info: Redefining \TeX on input line 1697.
+LaTeX Info: Redefining \LaTeX on input line 1723.
+LaTeX Info: Redefining \LaTeXe on input line 1748.
+\heisei=\count89
+)
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/latex/amsmath/amsmat
+h.sty
+Package: amsmath 2013/01/14 v2.14 AMS math features
+\@mathmargin=\skip43
+
+For additional information on amsmath, use the `?' option.
+
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/latex/amsmath/amstex
+t.sty
+Package: amstext 2000/06/29 v2.01
+
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/latex/amsmath/amsgen
+.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks15
+\ex@=\dimen121
+))
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/latex/amsmath/amsbsy
+.sty
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen122
+)
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/latex/amsmath/amsopn
+.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count90
+LaTeX Info: Redefining \frac on input line 210.
+\uproot@=\count91
+\leftroot@=\count92
+LaTeX Info: Redefining \overline on input line 306.
+\classnum@=\count93
+\DOTSCASE@=\count94
+LaTeX Info: Redefining \ldots on input line 378.
+LaTeX Info: Redefining \dots on input line 381.
+LaTeX Info: Redefining \cdots on input line 466.
+\Mathstrutbox@=\box42
+\strutbox@=\box43
+\big@size=\dimen123
+LaTeX Font Info:    Redeclaring font encoding OML on input line 566.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
+\macc@depth=\count95
+\c@MaxMatrixCols=\count96
+\dotsspace@=\muskip10
+\c@parentequation=\count97
+\dspbrk@lvl=\count98
+\tag@help=\toks16
+\row@=\count99
+\column@=\count100
+\maxfields@=\count101
+\andhelp@=\toks17
+\eqnshift@=\dimen124
+\alignsep@=\dimen125
+\tagshift@=\dimen126
+\tagwidth@=\dimen127
+\totwidth@=\dimen128
+\lineht@=\dimen129
+\@envbody=\toks18
+\multlinegap=\skip44
+\multlinetaggap=\skip45
+\mathdisplay@stack=\toks19
+LaTeX Info: Redefining \[ on input line 2665.
+LaTeX Info: Redefining \] on input line 2666.
+)
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/latex/comment/commen
+t.sty
+\CommentStream=\write3
+ Excluding comment 'comment')
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/latex/float/float.st
+y
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count102
+\float@exts=\toks20
+\float@box=\box44
+\@float@everytoks=\toks21
+\@floatcapt=\box45
+)
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/latex/graphics/graph
+icx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/latex/graphics/keyva
+l.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks22
+)
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/latex/graphics/graph
+ics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/latex/graphics/trig.
+sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/latex/latexconfig/gr
+aphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: dvipdfmx.def on input line 91.
+
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/latex/dvipdfmx-def/d
+vipdfmx.def
+File: dvipdfmx.def 2013/09/21 v3.3 LaTeX graphics driver for dvipdfmx (TeX Live
+/ChoF)
+))
+\Gin@req@height=\dimen130
+\Gin@req@width=\dimen131
+)
+(/Applications/TeXLive/Library/texlive/2013/texmf-dist/tex/latex/tools/bm.sty
+Package: bm 2004/02/26 v1.1c Bold Symbol Support (DPC/FMi)
+\symboldoperators=\mathgroup5
+\symboldletters=\mathgroup6
+\symboldsymbols=\mathgroup7
+\symboldmincho=\mathgroup8
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 138.
+LaTeX Info: Redefining \bm on input line 204.
+)
+(./midreport.aux)
+\openout1 = `midreport.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for JY1/mc/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for JT1/mc/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Font shape `JT1/mc/m/n' will be
+(Font)              scaled to size 16.60605pt on input line 12.
+LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
+(Font)              scaled to size 16.60605pt on input line 12.
+LaTeX Font Info:    Font shape `JT1/mc/m/n' will be
+(Font)              scaled to size 11.53198pt on input line 12.
+LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
+(Font)              scaled to size 11.53198pt on input line 12.
+LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
+(Font)              scaled to size 5.76599pt on input line 12.
+LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
+(Font)              scaled to size 11.53198pt on input line 12.
+LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
+(Font)              scaled to size 7.68799pt on input line 12.
+LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
+(Font)              scaled to size 5.76599pt on input line 12.
+LaTeX Font Info:    Font shape `JT1/mc/m/n' will be
+(Font)              scaled to size 13.83836pt on input line 14.
+LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
+(Font)              scaled to size 13.83836pt on input line 14.
+LaTeX Font Info:    Font shape `JT1/gt/m/n' will be
+(Font)              scaled to size 13.83836pt on input line 14.
+LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
+(Font)              scaled to size 13.83836pt on input line 14.
+LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
+(Font)              scaled to size 6.72699pt on input line 17.
+LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
+(Font)              scaled to size 4.805pt on input line 17.
+LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
+(Font)              scaled to size 9.60999pt on input line 17.
+LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
+(Font)              scaled to size 6.72699pt on input line 17.
+LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
+(Font)              scaled to size 4.805pt on input line 17.
+ [1
+
+]
+LaTeX Font Info:    Font shape `JT1/gt/m/n' will be
+(Font)              scaled to size 11.53198pt on input line 105.
+LaTeX Font Info:    Font shape `JT1/mc/m/n' will be
+(Font)              scaled to size 6.72699pt on input line 140.
+LaTeX Font Info:    Font shape `JT1/mc/m/n' will be
+(Font)              scaled to size 4.805pt on input line 140.
+ [2] [3] [4]
+LaTeX Font Info:    Font shape `JT1/gt/m/n' will be
+(Font)              scaled to size 9.60999pt on input line 259.
+ [5] [6] [7] (./midreport.aux) ) 
+Here is how much of TeX's memory you used:
+ 1533 strings out of 494004
+ 18600 string characters out of 6147768
+ 94241 words of memory out of 5000000
+ 4997 multiletter control sequences out of 15000+600000
+ 21558 words of font info for 93 fonts, out of 8000000 for 9000
+ 750 hyphenation exceptions out of 8191
+ 27i,15n,21p,329b,295s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on midreport.dvi (7 pages, 19188 bytes).

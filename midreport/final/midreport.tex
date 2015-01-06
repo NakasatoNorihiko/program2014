@@ -1,0 +1,311 @@
+\documentclass{jsarticle}
+\usepackage{amsmath}
+\usepackage{comment}
+\usepackage{float}
+\usepackage[dvipdfmx,hiresbb]{graphicx}
+\usepackage{bm}
+
+\title{プログラミング基礎演習 中間レポート}
+\author{340481H　電子情報工学科内定　中里徳彦}
+\date{2015/01/06}
+\begin{document}
+\maketitle
+
+\section{導入}
+多項式の項の次数が必ず非負の整数となることを利用し、多項式をベクトルのように見立て課題1-4を解いた。
+\section{手法}
+多項式は$a_0x^n + a_1x^{n-1}+ \dots + a_{n-1}x + a_n$の形の代数的表現である。ここで$a_i(i = 0, 1, \dots, n)$は複素数でnは非負整数である~\cite{数学}。したがって、n次の多項式はn+1次の
+\begin{equation}
+\bm{a} = \begin{pmatrix}
+	a_n \\
+	a_{n-1} \\
+	\vdots \\
+	a_1 \\
+	a_0
+\end{pmatrix}
+\end{equation}
+というベクトルで表すことができる（多項式の添字に合わせたためベクトルの普通の添字とは順序が逆転している）。今回の課題では多項式の操作をこのベクトルに対する操作として考え実装した。ただし、$a_i(i = 0, 1, \dots, n)$は実数に限定する。
+上記のベクトルを構造体Polynomialとして実装した。この構造体は多項式の最大次数はint n、係数はdouble *aである。%実数を浮動小数点数で表現したため、誤差が生じる
+
+課題を解く前に、多項式の定数倍、加算、減算、乗算を定義した。多項式の定数倍、加算は通常のベクトルの定数倍、加算と似たように
+\begin{equation}
+\bm{b} = c\bm{a} = 
+\begin{pmatrix}
+	ca_n \\
+	ca_{n-1} \\
+	\vdots \\
+	ca_1 \\
+	ca_0
+\end{pmatrix}
+\end{equation}
+\begin{equation}
+\bm{c} = \bm{a} + \bm{b} = 
+\begin{pmatrix}
+	a_n + b_n \\
+	a_{n-1} + b_{n-1} \\
+	\vdots \\
+	a_1 + b_1 \\
+	a_0 + b_0
+\end{pmatrix}
+\end{equation}
+として表すことができる。ただしcは実数。ただし、$\bm{a}$と$\bm{b}$の次数が一致しない場合にも加算が出来るように定義する。例えば$\bm{b}$の次数が$l < n$だった場合、
+\begin{equation}
+\bm{c} = \bm{a} + \bm{b} = 
+\begin{pmatrix}
+	a_n + b_l \\
+	a_{n-1} + b_{l-1} \\
+	\vdots \\
+	a_{n-l} + b_0 \\
+	a_{n-l-1}\\
+	\vdots \\
+	a_1 \\
+	a_0
+\end{pmatrix}
+\end{equation}
+とする。$\bm{a}$の次数のほうが低かった場合も同様である。また計算の結果最高次数に対応する要素が0だった場合、最高次数の要素が0以外になるまで、ベクトルの次数を小さくするようにした。つまり、
+\begin{equation}
+\bm{c} = \bm{a} + \bm{b} = 
+\begin{pmatrix}
+	c_n \\
+	c_{n-1} \\
+	\vdots \\
+	c_1 \\
+	c_0 \\
+	0 \\
+	\vdots \\
+	0
+\end{pmatrix}
+\to 
+\begin{pmatrix}
+	c_n \\
+	c_{n-1} \\
+	\vdots \\
+	c_1 \\
+	c_0 \\
+\end{pmatrix}
+\end{equation}
+という操作を加算の最後に行なった。ただし、係数が浮動小数点数であるため、係数が正確に0にならないこともあるので、係数がERROR（このプログラムでは0.0001）以下の時は0であるとみなした。減算は定数倍と加算を組合せて
+\begin{equation}
+\bm{c} = \bm{a} - \bm{b} = \bm{a} + (-1)\bm{b}
+\end{equation}
+と考えた。乗算はベクトルや行列に定義されている通常の演算（内積、外積など）を用いて定義するのが困難であるため、多項式の乗算の定義に素直に従って
+\begin{equation}
+\bm{c} = 
+\begin{pmatrix}
+	a_m b_n \\
+	a_{m-1} b_n + a_m b_{n-1} \\
+	\vdots \\
+	a_0 b_1 + a_1 b_0 \\
+	a_0 b_0
+\end{pmatrix}	
+\end{equation}
+として定義した。ただし$\bm{c}$は$m+n+1$次のベクトルである。
+
+また、多項式の$x^n$乗も実装した。$n$は整数である。これはベクトルで表現した多項式において、各要素を下にn個シフトさせることに等しい。ただしその時ベクトルの次数もn増える。$n < 0$の場合は、ベクトルの次数をn減らし、元々のベクトルの上n個は消去するようにした。要素が全て消去されてしまう場合は、NULLがかえってくるようにした。
+\subsection{課題1、2}
+単項式は多項式の一部である。よって課題1と課題2は同一の課題とみなすことができるため同じセクションにまとめる。$a_0x^n + a_1x^{n-1} + \dots + a_n$を微分するために
+\begin{align}
+	\bf{a} 
+	&= 
+\begin{pmatrix}
+	a_n \\
+	a_{n-1} \\
+	\vdots \\
+	a_1 \\
+	a_0
+\end{pmatrix}  & \text{元のベクトル}\\
+	&\to
+\begin{pmatrix}
+	a_n \\
+	1~a_{n-1} \\
+	\vdots \\
+	(n-1)a_1 \\
+	na_0
+\end{pmatrix}  & \text{次数倍する}\\
+	&\to
+\begin{pmatrix}
+	1~a_{n-1} \\
+	\vdots \\
+	(n-1)a_1 \\
+	na_0 \\
+	0
+\end{pmatrix} & \text{各要素を一つ上にシフトする} \\
+	&\to
+\begin{pmatrix}
+	1~a_{n-1} \\
+	\vdots \\
+	(n-1)a_1 \\
+	na_0 \\
+\end{pmatrix} & \text{最高次数を消去する}
+\end{align}
+とした。ただし、元の多項式が定数だった場合、ベクトルがNULLとして帰ってくる。そのため、NULLとした場合は元の多項式が定数だったと考え、ベクトルとしての次数が1の$\bf{0}$を計算結果とした。
+\subsection{課題3}
+割られる多項式に対応するn次ベクトルを$\bm{a}$、割る多項式に対応するm次ベクトルをを$\bm{b}$、商のn-m次ベクトルを$\bm{q}$、余りのm-1次ベクトルを$\bm{r}$とする。筆算での方法に対応して商と余りを求めると次のようになる。まず$q_0$は$a_0 / b_0$で求まる。次に、
+\begin{align}
+\bm{c} &=
+\begin{pmatrix}
+	a_n \\
+	a_{n-1} \\
+	\vdots \\
+	a_{m+1} \\
+	a_m \\
+	a_{m-1} \\
+	\vdots \\
+	a_1 \\
+	a_0
+\end{pmatrix} - q_0
+\begin{pmatrix}
+	0 \\
+	0 \\
+	\vdots \\
+	0 \\
+	b_m \\
+	b_{m-1} \\
+	\vdots \\
+	b_1 \\
+	b_0
+\end{pmatrix} & \text{$\bm{b}$をシフトして引き算}\\
+&=
+\begin{pmatrix}
+	a_n \\
+	a_{n-1} \\
+	\vdots \\
+	a_{m+1} \\
+	a_m - q_0 b_m \\
+	a_{m-1} - q_0 b_{m-1} \\
+	\vdots \\
+	a_1 - q_0b_1 \\
+	0
+\end{pmatrix} \\
+&= 
+\begin{pmatrix}
+	a_n \\
+	a_{n-1} \\
+	\vdots \\
+	a_{m+1} \\
+	a_m - q_0 b_m \\
+	a_{m-1} - q_0 b_{m-1} \\
+	\vdots \\
+	a_1 - q_0b_1 \\
+\end{pmatrix} & \text{最高次数を削除} \\
+&=
+\begin{pmatrix}
+	c_{n-1} \\
+	c_{n-2} \\
+	\vdots \\
+	c_0 \\
+\end{pmatrix}
+\end{align}
+と計算する。$q_1$は$c_0/b_0$で求まる。同様の計算を$q_{n-m}$が求まるまで行うと、商が導出できる。
+
+余りは
+\begin{align}
+	\bm{r} &= \bm{a} - \bm{b} \bm{q}
+\end{align}
+であることから求めた。
+\subsection{課題4}
+ユークリッドの互除法を用いた~\cite{ユークリッド}。n次方程式を表すベクトルを$\bm{a}$、$m(< n)$次方程式を表すベクトル$\bm{b}$とするとユークリッドの互除法は次のような操作となる。
+\begin{align}&
+\begin{pmatrix}
+	a_n \\
+	a_{n-1} \\
+	\vdots \\
+	a_{m+1} \\
+	a_m \\
+	a_{m-1} \\
+	\vdots \\
+	a_1 \\
+	a_0
+\end{pmatrix} - (a_0/b_0)
+\begin{pmatrix}
+	0 \\
+	0 \\
+	\vdots \\
+	0 \\
+	b_m \\
+	b_{m-1} \\
+	\vdots \\
+	b_1 \\
+	b_0
+\end{pmatrix} & \text{$\bm{b}$をシフトして引き算}\\
+=&
+\begin{pmatrix}
+	a_n \\
+	a_{n-1} \\
+	\vdots \\
+	a_{m+1} \\
+	a_m - (a_0/b_0) b_m \\
+	a_{m-1} - (a_0/b_0) b_{m-1} \\
+	\vdots \\
+	a_1 - (a_0/b_0)b_1 \\
+	0
+\end{pmatrix} \\
+\to&
+\begin{pmatrix}
+	a_n \\
+	a_{n-1} \\
+	\vdots \\
+	a_{m+1} \\
+	a_m - (a_0/b_0) b_m \\
+	a_{m-1} - (a_0/b_0) b_{m-1} \\
+	\vdots \\
+	a_1 - (a_0/b_0)b_1 \\
+\end{pmatrix} & \text{最大次数が0にならないよう調整}\\
+\end{align}
+このようにして求めたベクトルと$\bm{b}$を用いてこの操作を繰り返し、$\bf{0}$が生じたら、その時点で操作をやめるともう一方のベクトルは最大公約元になっている。
+\section{結果}
+\subsection{課題1、2}
+単項式を引数とすると次のようになる。
+\begin{verbatim}
+$./kadai1 "10*x^3"        
+diff +0.0 +0.0*x +30.0*x^2 
+\end{verbatim}
+定数を引数とすると次のように0が出力される。
+\begin{verbatim}
+$ ./kadai1 "2"                                                                                                      
+diff +0.0
+\end{verbatim}
+多項式の場合は次のように同類項がまとめられて出力される。
+\begin{verbatim}
+$ ./kadai2 "10*x^3-32*x^5+3*x^3+5"    
+diff +0.0 +0.0*x +39.0*x^2 +0.0*x^3 -160.0*x^4 
+\end{verbatim}
+\subsection{課題3}
+次のように出力される。
+\begin{verbatim}
+$ ./kadai3 "x^2+7*x+3" "x+1"            
+Quotient +6.0 +1.0*x 
+Remainder -3.0 
+\end{verbatim}
+\begin{verbatim}
+$ ./kadai3 "x^4+x+1" "x^2+1"         
+Quotient -1.0 -0.0*x +1.0*x^2 
+Remainder +2.0 +1.0*x
+\end{verbatim}
+また引く数が0のときは次のように出力される。
+\begin{verbatim}
+$ ./kadai3 "x^4+x+1" "0"            
+argv[2] == "0"
+NULL
+argv[2] == "0"
+NULL
+Quotient Remainder
+\end{verbatim}
+
+\subsection{課題4}
+\begin{verbatim}
+$ ./kadai4 "x^6+3*x^5+x^3+2*x^2-4*x-3" "x^3+5*x^2+3*x-9"  
+GCD -3.0 +2.0*x +1.0*x^2 
+\end{verbatim}
+\section{考察}
+今回は係数に倍精度浮動小数点数を用いたが、その場合どうしても誤差が出てしまう。また循環小数を扱うことができないという欠点も存在する。係数に分数を用いることでそれらの欠点をなくすことできると考えられる。
+
+\begin{thebibliography}{9}
+\bibitem{数学}
+	一松　信　伊藤雄二　監訳　『数学辞典』
+	（朝倉書店，1993）
+\bibitem{ユークリッド}
+	多項式の基本 (2015/1/6アクセス) \\
+	http://www.math.nagoya-u.ac.jp/~shinichi/K105.pdf
+\end{thebibliography}
+\end{document}
