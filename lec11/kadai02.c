@@ -37,13 +37,42 @@ Node *create_tree(int *pos, char *s)
     return current_node;
 }
 
+double calculate(Node *n)
+{
+    char value[2];
+    if (isdigit(n->value)){
+        value[0] = n->value;
+        value[1] = '\0';
+        return atof(value);
+    }
+    
+    double left = calculate(n->left);
+    double right = calculate(n->right);
+    if (n->value == '+') {
+        return left + right;
+    } else if (n->value == '-') {
+        return left - right;
+    } else if (n->value == '*') {
+        return left * right;
+    } else if (n->value == '/') {
+        return left / right;
+    } else {
+        printf("error: there is character which is not '+-*/'\n");
+        return -1;
+    }
+}
+
 int main()
 {
-    char *str = "+/9*84-*84+73"; /* 22.281250 */
+    char *str = "+-8*2+-8/27-*5*3+-8*2+-8/22-*2*315//2/9755/*2/945"; /* 234.138095 */
     int p = 0;
+    double value = 0.0;
     Node *root = create_tree(&p, str);
     parse(root);
     printf("\n");
+    value = calculate(root);
+    printf("%lf\n", value);
+    
     return 0;
 }
 
