@@ -5,71 +5,55 @@
 #include <math.h>
 #include <complex.h>
 
-#define MAXLEN 1000             /* 項数の最大*/
+#define MAXLEN 100           /* 項数の最大*/
 #define ERROR 0.0001            /* 誤差の許容範囲 */
 
 char**  s_strcut(char *ori, char *cut, int *datalen, char *); /* 文字列oriをcutに含まれる文字で切り分ける関数 datallenにdataの要素数を返す */
 int s_strlen(char *);
 void s_strcpy(char *, char *);
 
-/* 単項式の定義 */
-typedef struct Monomial_tag
+typedef struct
 {
-  double c;
-  int n;
-} Monomial;
-
-/* 単項式をつくる関数 */
-Monomial* construct_monomial(double c, int n)
-{
-  Monomial *ret = (Monomial*)malloc(sizeof(Monomial));
-  ret->c = c;
-  ret->n = n;
-  return ret;
-}
-
-/* 多項式の定義 */
-typedef struct Polynomial_tag
-{
-  Monomial **mono;               /* 単項式の配列　*mono[0]が0次項、*mono[1]が1次項を表す */
-  int n;                        /* 最大次数 */
+  double *a;                   /* 係数 */
+  int n;                        /* ベクトルの次数 */
 } Polynomial;
 
-/* a*x^b　の形式の文字列を Monomial*形式に変換 */
-Monomial* transform_to_monomial(char *string)
+void transform_to_monomial(char *string, double *d, int *n)
 {
   char cut[] = "*^";
   char cutsymbol[MAXLEN];
   char **buffer = s_strcut(string, cut, NULL, cutsymbol);
-  Monomial *ret;
   if (cutsymbol[1] == '*' && cutsymbol[2] == '^') {
-    ret = construct_monomial(atof(buffer[0]), atoi(buffer[2]));
+    *n = atoi(buffer[2]);
+    d[atoi(buffer[2])] += atof(buffer[0]);
   } else if (cutsymbol[1] == '^') {
-    ret = construct_monomial(1,atoi(buffer[1]));
+    *n = atoi(buffer[1]);
+    d[atoi(buffer[1])] += 1;
   } else if (cutsymbol[1] == '*') {
-    ret = construct_monomial(atof(buffer[0]),1);
+    *n = 1;
+    d[1] += atof(buffer[0]);
   } else if (strcmp(buffer[0],"x")== 0) {
-    ret = construct_monomial(1,1);
+    *n = 1;
+    d[1] += 1;
   } else {
-    ret = construct_monomial(atof(buffer[0]),0);
+    *n = 0;
+    d[0] += atof(buffer[0]);
   }
   free(buffer);
-  return ret;
 }
 
-/* 多項式を初期化 */
+/* 多項式を初期化して生成 */
 Polynomial* initialize_polynomial(int n)
 {
-  int i;
-  Polynomial* ret = (Polynomial*)malloc(sizeof(Polynomial));
-  ret->mono = (Monomial**)malloc(sizeof(Monomial*)*(n+1));
-  ret->n = n;
-  for (i = 0; i <= n; i++) {
-    ret->mono[i] = (Monomial*)malloc(sizeof(Monomial));
-    ret->mono[i]->c = 0.0;
-    ret->mono[i]->n = i;
+  if (n >= 0) {
+    Polynomial* ret = (Polynomial*)malloc(sizeof(Polynomial));
+    ret->a = (double*)malloc(sizeof(double)*(n+1));
+    ret->n = n;
+    memset(ret->a, 0, n+1);
+    return ret;
+  } else {
+    return NULL;
   }
-  return ret;
 }
 
 void copy_polynomial(Polynomial *p1, Polynomial *p2)
@@ -78,14 +62,14 @@ void copy_polynomial(Polynomial *p1, Polynomial *p2)
   if (p2->n <= p1->n) {
     p1->n = p2->n;
     for (i = 0; i <= p2->n; i++) {
-      p1->mono[i]->c = p2->mono[i]->c;
+      p1->a[i] = p2->a[i];
     }
     for (i = p2->n + 1; i <= p1->n; i++) {
-      p1->mono[i]->c = 0;
+      p1->a[i] = 0.0;
     }
   } else {
     for (i = 0; i <= p1->n; i++) {
-      p1->mono[i]->c = p2->mono[i]->c;
+      p1->a[i] = p2->a[i];
     }
   }    
 }
@@ -93,12 +77,10 @@ void copy_polynomial(Polynomial *p1, Polynomial *p2)
 /* 最高次項の係数が0の時、次数を減らし最高次項の係数がゼロにならないようにする */
 void zero_delete(Polynomial *p)
 {
-  int i = p->n;
-  while (fabs(p->mono[i]->c) <= ERROR && i > 0) {
-    free(p->mono[i]);
+  while (fabs(p->a[p->n]) <= ERROR && p->n > 0) {
     (p->n)--;
-    i--;
   }
+  p->a = (double*)realloc(p->a, sizeof(double)*(p->n+1));
 }
 /* 多項式を作る関数 */
 /* 同類項をまとめた多項式を生成する */
@@ -107,41 +89,24 @@ Polynomial* transform_to_polynomial(char *string)
   char cut[] = "+-";
   int len, i;
   int maxn = 0;                 /* 最大次数 */
+  int tmpn = 0;
   char cutsymbol[MAXLEN];
   char **buffer = s_strcut(string, cut, &len, cutsymbol);
   Polynomial *tmp = (Polynomial *)malloc(sizeof(Polynomial));
-  tmp->mono = (Monomial**)malloc(sizeof(Monomial*)*(len+1));
+  tmp->a = (double*)malloc(sizeof(double)*(MAXLEN));
+  memset(tmp->a, 0, MAXLEN);
   for (i = 0; i < len; i++) {
-    tmp->mono[i] = transform_to_monomial(buffer[i]);
+    transform_to_monomial(buffer[i], tmp->a ,&tmpn);
     if (cutsymbol[i] == '-') {
-      tmp->mono[i]->c *= -1;
+      tmp->a[tmpn] *= -1;
     }
-    if (tmp->mono[i]->n > maxn) {
-      maxn = tmp->mono[i]->n;
-    }
-  }
-  Polynomial *ret = initialize_polynomial(maxn);
-  for (i = 0; i < len; i++) {
-    if (tmp->n >= 0) { 
-      ret->mono[tmp->mono[i]->n]->c += tmp->mono[i]->c;
-    } else {
-      return NULL;
+    if (tmpn > maxn) {
+      maxn = tmpn;
     }
   }
-  free(tmp);
-  return ret;
-}
-
-void print_monomial(Monomial *m)
-{
-  if (m == NULL) fprintf(stderr, "NULL\n");
-  if (m->n != 0 && m->n != 1) { 
-    printf("%+2.1lf*x^%d ", m->c, m->n);
-  } else if (m->n == 1) {
-    printf("%+2.1lf*x ", m->c);
-  } else if (m->n == 0) {
-    printf("%+2.1lf ", m->c);
-  }
+  tmp->n = maxn;
+  zero_delete(tmp);
+  return tmp;
 }
 
 void print_polynomial(Polynomial *p)
@@ -149,7 +114,13 @@ void print_polynomial(Polynomial *p)
   if (p == NULL) fprintf(stderr, "NULL\n");
   int i;
   for (i = 0; i <= p->n; i++) {
-    print_monomial(p->mono[i]);
+    if (i != 0 && i != 1) { 
+      printf("%+2.1lf*x^%d ", p->a[i], i);
+    } else if (i == 1) {
+      printf("%+2.1lf*x ", p->a[i]);
+    } else if (i == 0) {
+      printf("%+2.1lf ", p->a[i]);
+    }
   }
   printf("\n");
 }
@@ -160,7 +131,7 @@ Polynomial *scalar_polynomial(Polynomial *p1, double c)
   Polynomial *scalar = initialize_polynomial(p1->n);
   int i;
   for (i = 0; i <= p1->n; i++) {
-    scalar->mono[i]->c = p1->mono[i]->c * c;
+    scalar->a[i] = p1->a[i] * c;
   }
   return scalar;
 }
@@ -177,11 +148,11 @@ Polynomial *addition_polynomial(Polynomial *p1, Polynomial *p2){
   Polynomial *addition = initialize_polynomial(maxn);
   for (i = 0; i <= maxn; i++) {
     if (i <= p1->n && i <= p2->n) { 
-      addition->mono[i]->c = p1->mono[i]->c + p2->mono[i]->c;
+      addition->a[i] = p1->a[i] + p2->a[i];
     } else if (i <= p1->n) {
-      addition->mono[i]->c = p1->mono[i]->c;
+      addition->a[i] = p1->a[i];
     } else if (i <= p2->n) {
-      addition->mono[i]->c = p2->mono[i]->c;
+      addition->a[i] = p2->a[i];
     }
   }
   zero_delete(addition);
@@ -203,40 +174,60 @@ Polynomial *product_polynomial(Polynomial *p1, Polynomial *p2)
   Polynomial *product = initialize_polynomial(max);
   for (i = 0; i <= p1->n; i++) {
     for (j = 0; j <= p2->n; j++) {
-      product->mono[p1->mono[i]->n + p2->mono[j]->n]->c += p1->mono[i]->c * p2->mono[j]->c;
+      product->a[i + j] += p1->a[i] * p2->a[j];
     }
   }
   return product;
 }
 
 /* x^(shift)倍する */
-/* void shift_polynomial(Polynomial *p1, int shift) */
-/* { */
-/*   Polynomial *s = initialize_polynomial(shift); */
-/*   s->mono[shift]->c = 1; */
-/*   Polynomial *tmp = product_polynomial(p1, s); */
-/*   copy_polynomial(p1, tmp); */
-/* } */
+Polynomial* shift_polynomial(Polynomial *p, int shift)
+{
+  int i;
+  Polynomial *s = initialize_polynomial(shift+p->n);
+  if (shift >= 0) {
+    for (i = 0; i <= p->n; i++) {
+      s->a[i+shift] = p->a[i];
+    }
+    for (i = 0; i < shift; i++) {
+      s->a[i] = 0;
+    }
+    return s;
+  } else {
+    for (i = 0; i <= p->n + shift; i++) {
+      s->a[i] = p->a[i-shift];
+    }
+    return s;
+  }
+}
+
+/* 多項式を微分する */
+Polynomial *diff_polynomial(Polynomial *p1)
+{
+  int i;
+  Polynomial *ret = initialize_polynomial(p1->n);
+  for (i = 0; i <= p1->n; i++) {
+    ret->a[i] = p1->a[i] * i;
+  }
+  ret = shift_polynomial(ret, -1);
+  return ret;
+}
 
 /* 多項式の除算 */
 Polynomial *quotient_polynomial(Polynomial *dividend, Polynomial *divisor)
 {
   int i, j, c;
   Polynomial *quotient = initialize_polynomial(dividend->n - divisor->n);
-  Polynomial *tmp = initialize_polynomial(divisor->n);
+  /* Polynomial *tmp = initialize_polynomial(divisor->n); */
 
-  for (i = 0; i <= divisor->n; i++)  {
-    tmp->mono[i]->c = dividend->mono[i+dividend->n-divisor->n]->c;
-  }
-  for (i = dividend->n; i >= divisor->n; i--) { 
-    quotient->mono[i-divisor->n]->c = tmp->mono[divisor->n]->c / divisor->mono[divisor->n]->c;
-    c = quotient->mono[i-divisor->n]->c;
-    tmp = subtraction_polynomial(tmp, scalar_polynomial(divisor, c));
-    if (i != divisor->n) {
-      for (j = divisor->n; j > 0; j--) {
-        tmp->mono[j]->c = tmp->mono[j-1]->c;
-      }
-      tmp->mono[0]->c = dividend->mono[i-divisor->n-1]->c;
+  Polynomial *tmp = initialize_polynomial(dividend->n);
+  copy_polynomial(tmp, dividend);
+
+  for (i = dividend->n; i >= divisor->n; i--) {
+    if (i-divisor->n ==  tmp->n - divisor->n) {
+      quotient->a[i-divisor->n] = tmp->a[tmp->n] / divisor->a[divisor->n];
+      c = quotient->a[i-divisor->n];
+      tmp = subtraction_polynomial(tmp, scalar_polynomial(shift_polynomial(divisor, tmp->n - divisor->n), c));
     }
   }
   free(tmp);
@@ -258,7 +249,6 @@ Polynomial *remainder_polynomial(Polynomial *dividend, Polynomial *divisor)
 Polynomial *euclidean(Polynomial *p1, Polynomial *p2)
 {
   int max;
-  int i;
   Polynomial *major;
   Polynomial *minor;
   Polynomial *sub;              /* 引き算する */
@@ -277,16 +267,11 @@ Polynomial *euclidean(Polynomial *p1, Polynomial *p2)
     copy_polynomial(minor, p1);
   }
 
-  while (!(minor->n == 0 && minor->mono[0]->c <= ERROR)) {
+  while (!(minor->n == 0 && minor->a[0] <= ERROR)) {
     sub = initialize_polynomial(major->n);
-    for (i = minor->n; i >= 0; i--) {
-      sub->mono[i+ major->n - minor->n]->c = minor->mono[i]->c;
-    }
-    for (i = major->n - minor->n - 1; i >= 0; i--) {
-      sub->mono[i]->c = 0;
-    }
+    sub = shift_polynomial(minor, major->n - minor->n);
 
-    tmp = subtraction_polynomial(major, scalar_polynomial(sub, major->mono[major->n]->c / sub->mono[major->n]->c));
+    tmp = subtraction_polynomial(major, scalar_polynomial(sub, major->a[major->n] / sub->a[major->n]));
     if (minor->n >= tmp->n) {
       copy_polynomial(major, minor);
       copy_polynomial(minor, tmp);
@@ -301,15 +286,17 @@ Polynomial *euclidean(Polynomial *p1, Polynomial *p2)
 
 int main(int argc, char *argv[])
 {
-  char test1[] = "x^6+3*x^5+x^3+2*x^2-4*x-3";
-  char test2[] = "x^3+5*x^2+3*x-9";
+  /* char test1[] = "x^6+3*x^5+x^3+2*x^2-4*x-3"; */
+  /* char test2[] = "x^3+5*x^2+3*x-9"; */
+  char test1[] = "x^4+x+1";
+  char test2[] = "x^2+1";
   Polynomial *p1 = transform_to_polynomial(test1);
   Polynomial *p2 = transform_to_polynomial(test2);
   /* Polynomial *p1 = transform_to_polynomial(argv[1]); */
   /* Polynomial *p2 = transform_to_polynomial(argv[2]); */
-  /* print_polynomial(p1); */
   printf("GCD ");
-  print_polynomial(euclidean(p1, p2));
+  print_polynomial(diff_polynomial(p1));
+  print_polynomial(diff_polynomial(p2));
   
   free(p1);
   free(p2);
@@ -337,7 +324,7 @@ void s_strcpy(char *str1, char *str2)
 }
             
 /* 文字列oriをcutに含まれる文字で切り分ける関数 datalenにdataの要素数を返す *cutsymbol　に何で切られたのかを書く*/
-char** s_strcut(char *ori, char *cut, int *datalen, char cutsymbol[MAXLEN]) {
+char** s_strcut(char ori[], char *cut, int *datalen, char cutsymbol[MAXLEN]) {
   int i, j; 
   char **data;
   int orilen = s_strlen(ori);

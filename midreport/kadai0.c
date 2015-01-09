@@ -2,11 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
-#include <complex.h>
 
 #define MAXLEN 1000             /* 項数の最大*/
-#define ERROR 0.0001            /* 誤差の許容範囲 */
 
 char**  s_strcut(char *ori, char *cut, int *datalen, char *); /* 文字列oriをcutに含まれる文字で切り分ける関数 datallenにdataの要素数を返す */
 int s_strlen(char *);
@@ -15,12 +12,12 @@ void s_strcpy(char *, char *);
 /* 単項式の定義 */
 typedef struct Monomial_tag
 {
-  double c;
+  int c;
   int n;
 } Monomial;
 
 /* 単項式をつくる関数 */
-Monomial* construct_monomial(double c, int n)
+Monomial* construct_monomial(int c, int n)
 {
   Monomial *ret = (Monomial*)malloc(sizeof(Monomial));
   ret->c = c;
@@ -43,15 +40,15 @@ Monomial* transform_to_monomial(char *string)
   char **buffer = s_strcut(string, cut, NULL, cutsymbol);
   Monomial *ret;
   if (cutsymbol[1] == '*' && cutsymbol[2] == '^') {
-    ret = construct_monomial(atof(buffer[0]), atoi(buffer[2]));
+    ret = construct_monomial(atoi(buffer[0]), atoi(buffer[2]));
   } else if (cutsymbol[1] == '^') {
     ret = construct_monomial(1,atoi(buffer[1]));
   } else if (cutsymbol[1] == '*') {
-    ret = construct_monomial(atof(buffer[0]),1);
+    ret = construct_monomial(atoi(buffer[0]),1);
   } else if (strcmp(buffer[0],"x")== 0) {
     ret = construct_monomial(1,1);
   } else {
-    ret = construct_monomial(atof(buffer[0]),0);
+    ret = construct_monomial(atoi(buffer[0]),0);
   }
   free(buffer);
   return ret;
@@ -66,39 +63,10 @@ Polynomial* initialize_polynomial(int n)
   ret->n = n;
   for (i = 0; i <= n; i++) {
     ret->mono[i] = (Monomial*)malloc(sizeof(Monomial));
-    ret->mono[i]->c = 0.0;
+    ret->mono[i]->c = 0;
     ret->mono[i]->n = i;
   }
   return ret;
-}
-
-void copy_polynomial(Polynomial *p1, Polynomial *p2)
-{
-  int i;
-  if (p2->n <= p1->n) {
-    p1->n = p2->n;
-    for (i = 0; i <= p2->n; i++) {
-      p1->mono[i]->c = p2->mono[i]->c;
-    }
-    for (i = p2->n + 1; i <= p1->n; i++) {
-      p1->mono[i]->c = 0;
-    }
-  } else {
-    for (i = 0; i <= p1->n; i++) {
-      p1->mono[i]->c = p2->mono[i]->c;
-    }
-  }    
-}
-  
-/* 最高次項の係数が0の時、次数を減らし最高次項の係数がゼロにならないようにする */
-void zero_delete(Polynomial *p)
-{
-  int i = p->n;
-  while (fabs(p->mono[i]->c) <= ERROR && i > 0) {
-    free(p->mono[i]);
-    (p->n)--;
-    i--;
-  }
 }
 /* 多項式を作る関数 */
 /* 同類項をまとめた多項式を生成する */
@@ -134,19 +102,17 @@ Polynomial* transform_to_polynomial(char *string)
 
 void print_monomial(Monomial *m)
 {
-  if (m == NULL) fprintf(stderr, "NULL\n");
   if (m->n != 0 && m->n != 1) { 
-    printf("%+2.1lf*x^%d ", m->c, m->n);
+    printf("%+d*x^%d ", m->c, m->n);
   } else if (m->n == 1) {
-    printf("%+2.1lf*x ", m->c);
-  } else if (m->n == 0) {
-    printf("%+2.1lf ", m->c);
-  }
+    printf("%+d*x ", m->c);
+  } else if (m->n == 0 && m->c != 0) {
+    printf("%+d ", m->c);
+  }    
 }
 
 void print_polynomial(Polynomial *p)
 {
-  if (p == NULL) fprintf(stderr, "NULL\n");
   int i;
   for (i = 0; i <= p->n; i++) {
     print_monomial(p->mono[i]);
@@ -155,7 +121,7 @@ void print_polynomial(Polynomial *p)
 }
 
 /* 多項式のスカラー倍 */
-Polynomial *scalar_polynomial(Polynomial *p1, double c)
+Polynomial *scalar_polynomial(Polynomial *p1, int c)
 {
   Polynomial *scalar = initialize_polynomial(p1->n);
   int i;
@@ -184,7 +150,6 @@ Polynomial *addition_polynomial(Polynomial *p1, Polynomial *p2){
       addition->mono[i]->c = p2->mono[i]->c;
     }
   }
-  zero_delete(addition);
   return addition;
 }
 
@@ -208,15 +173,6 @@ Polynomial *product_polynomial(Polynomial *p1, Polynomial *p2)
   }
   return product;
 }
-
-/* x^(shift)倍する */
-/* void shift_polynomial(Polynomial *p1, int shift) */
-/* { */
-/*   Polynomial *s = initialize_polynomial(shift); */
-/*   s->mono[shift]->c = 1; */
-/*   Polynomial *tmp = product_polynomial(p1, s); */
-/*   copy_polynomial(p1, tmp); */
-/* } */
 
 /* 多項式の除算 */
 Polynomial *quotient_polynomial(Polynomial *dividend, Polynomial *divisor)
@@ -254,62 +210,15 @@ Polynomial *remainder_polynomial(Polynomial *dividend, Polynomial *divisor)
   return remainder;
 }
 
-/* ユークリッド互除法で最大公約数を求める */
-Polynomial *euclidean(Polynomial *p1, Polynomial *p2)
-{
-  int max;
-  int i;
-  Polynomial *major;
-  Polynomial *minor;
-  Polynomial *sub;              /* 引き算する */
-  Polynomial *tmp;
-
-  max = (p1->n > p2->n) ? p1->n : p2->n;
-
-  major = initialize_polynomial(max);
-  minor = initialize_polynomial(max);
-
-  if (p1->n > p2->n) {
-    copy_polynomial(major, p1);
-    copy_polynomial(minor, p2);
-  } else {
-    copy_polynomial(major, p2);
-    copy_polynomial(minor, p1);
-  }
-
-  while (!(minor->n == 0 && minor->mono[0]->c <= ERROR)) {
-    sub = initialize_polynomial(major->n);
-    for (i = minor->n; i >= 0; i--) {
-      sub->mono[i+ major->n - minor->n]->c = minor->mono[i]->c;
-    }
-    for (i = major->n - minor->n - 1; i >= 0; i--) {
-      sub->mono[i]->c = 0;
-    }
-
-    tmp = subtraction_polynomial(major, scalar_polynomial(sub, major->mono[major->n]->c / sub->mono[major->n]->c));
-    if (minor->n >= tmp->n) {
-      copy_polynomial(major, minor);
-      copy_polynomial(minor, tmp);
-    } else {
-      copy_polynomial(major, tmp);
-    }
-    free(tmp);
-    free(sub);
-  }
-  return major;
-}
 
 int main(int argc, char *argv[])
 {
-  char test1[] = "x^6+3*x^5+x^3+2*x^2-4*x-3";
-  char test2[] = "x^3+5*x^2+3*x-9";
-  Polynomial *p1 = transform_to_polynomial(test1);
-  Polynomial *p2 = transform_to_polynomial(test2);
-  /* Polynomial *p1 = transform_to_polynomial(argv[1]); */
-  /* Polynomial *p2 = transform_to_polynomial(argv[2]); */
-  /* print_polynomial(p1); */
-  printf("GCD ");
-  print_polynomial(euclidean(p1, p2));
+  Polynomial *p1 = transform_to_polynomial(argv[1]);
+  Polynomial *p2 = transform_to_polynomial(argv[2]);
+  printf("Quotient:  ");
+  print_polynomial(quotient_polynomial(p1,p2));
+  printf("Remainder: ");
+  print_polynomial(remainder_polynomial(p1,p2));
   
   free(p1);
   free(p2);
