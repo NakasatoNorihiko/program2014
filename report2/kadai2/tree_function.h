@@ -12,8 +12,10 @@ typedef struct Node_tag
 } Node;
 
 void parse(Node *);
+Node *char2tree(char[]);
+int  find_n_branch(char *);
 Node *create_tree(int *, char **);
-double calculate(Node *);
+int  calculate(Node *,int, int);
 
 #endif
 

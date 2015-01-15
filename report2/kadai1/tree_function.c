@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include <math.h>
 #include "my_string.h"
-#include "structured_function.h"
+#include "tree_function.h"
 
 void parse(Node *n) 
 {
@@ -28,15 +28,16 @@ void parse(Node *n)
 
 int find_n_branch(char value[])
 {
+  /* 枝が1本出る関数はbranch[0],2本出る関数はbranch[1]にある */
+  char* branch[2][4] = {{"Sin" , "Cos"     , ""     , ""},
+                        {"Plus", "Subtract", "Times", "Divide"}};
   char *e;
   strtod(value, &e);
-  
-  char* branch[2][4] = {{"Sin", "Cos", "", ""},
-                     {"Plus", "Subtract", "Times", "Divide"}};
-  
+  /* valueが数字だったら */
   if (strcmp(e, "") == 0) {
     return 0;
   }
+  
   int i, j;
   for (i = 0; i < 2; i++) {
     for (j = 0; j < 4; j++) {
@@ -48,6 +49,7 @@ int find_n_branch(char value[])
   
   return -1;                    /* 予定語に入っておらず、数でもない場合 */
 }
+
 Node *create_tree(int *pos, char **s)
 {
   int i;

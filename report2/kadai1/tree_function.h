@@ -1,5 +1,5 @@
-#ifndef _FUNCTION_STRUCTURING_H_
-#define _FUNCTION_STRUCTURING_H_
+#ifndef _TREE_FUNCTION_H_
+#define _TREE_FUNCTION_H_
 
 #define VALUE_LEN 10
 #define MAX_BRANCH 100

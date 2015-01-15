@@ -1,5 +1,5 @@
-PROGRAM = kadai2
-OBJS = kadai2.o my_string.o structured_function.o
+PROGRAM = kadai1
+OBJS = kadai1.o my_string.o tree_function.o
 CFLAGS = -Wall -g
 CC = gcc $(CFLAGS)
 
@@ -17,7 +17,6 @@ $(PROGRAM): $(OBJS)
 clean:
 	rm -f $(OBJS)
 
-kadai2.o: kadai2.c my_string.h structured_function.h
+kadai1.o: kadai1.c my_string.h tree_function.h
 my_string.o: my_string.c
-structured_function.o: structured_function.c my_string.h \
-  structured_function.h
+tree_function.o: tree_function.c my_string.h tree_function.h

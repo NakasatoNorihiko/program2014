@@ -1,0 +1,52 @@
+\documentclass{jsarticle}
+\usepackage{amsmath}
+\usepackage{comment}
+\usepackage{float}
+\usepackage[dvipdfmx,hiresbb]{graphicx}
+\usepackage{bm}
+
+\title{プログラミング基礎演習 第二回レポート}
+\author{340481H　電子情報工学科内定　中里徳彦}
+\date{2015/01/14}
+\begin{document}
+\maketitle
+
+\section{導入}
+課題1では第11回の手法と同様の方法で関数を木構造にし計算した。ただし引数の違う関数の場合、のびる枝の数も変化するようにした。課題2ではルール、初期位置、試行回数を引数から設定できるライフゲームを作成し、gnuplotを用いてgifファイルに出力するプログラムを作成した。
+\section{手法}
+\subsection{課題1}
+課題を解くプログラムはkadai1.c、my\_\,string.c、tree\_\,function.cの3つのソースファイルとその3つに対応する3つのヘッダファイルで構成されており、Makefileを用いてコンパイルする。kadai1.cはmain関数が含まれているファイルである。my\_\,string.cは自作のs\_\,strcut関数とそれに必要な関数が含まれるファイルである。s\_\,strcut関数は文字列を指定した文字で区切って新たな文字列配列を作り、その先頭ポインタを返す関数である。tree\_\,function.cはs\_\,strcutで作成した文字列配列から木構造を作る関数create\_\,treeや木構造から計算を行うcalculateなどが含まれる。
+
+\subsection{課題2}
+プログラムはkadai2.c、my\_\,string.c、tree\_\,function.c、lifegame.c、kadai2\_\,ext.c、char\_\,rule.c、my\_\,math.cの7つのソースファイルとそれらに対応する7つのヘッダファイルで構成されており、Makefileを用いてコンパイルする。
+\section{結果}
+\subsection{課題1}
+課題文の例を実行すると下のように適切に出力される。
+\begin{verbatim}
+$ ./kadai1 "Plus[Sin[3.4],Times[Cos[4.1],8]]"                                                                                     
+Plus[Sin[3.4],Times[Cos[4.1],8]] = -4.854133
+\end{verbatim}
+
+下のような全ての関数が含まれる文であっても、適切に出力される。
+\begin{verbatim}
+$ ./kadai1 "Subtract[Plus[Sin[3.4],Times[Cos[4.1],8]],Divide[Sin[2.1],Cos[1.2]]]"
+Subtract[Plus[Sin[3.4],Times[Cos[4.1],8]],Divide[Sin[2.1],Cos[1.2]]] = -7.236335
+\end{verbatim}
+\subsection{課題2}
+以下のように入力すると、kadai2ディレクトリ内のkadai2.gifが出力される。
+\begin{verbatim}
+$ ./kadai2 23 3 init 100 kadai2.gif
+\end{verbatim}
+以下のように入力すると、kadai2\_\,super.gifが出力される。kadai2.gifとkadai2\_\,super.gifの出力結果は異なっており、ルールが変更できていることが分かる。また出力ファイル、ステップ数の変更もできている。
+\begin{verbatim}
+$ ./kadai2 23 36 init 200 kadai2_super.gif
+\end{verbatim}
+次のように入力すると、kadai2\_\,init.gifが出力される。初期状態を記したファイルの読み込みにも成功している。
+\begin{verbatim}
+$ ./kadai2 23 36 init.txt 50 kadai2_init.gif
+\end{verbatim}
+
+\section{考察}
+
+
+\end{document}

@@ -30,9 +30,7 @@ void parse(Node *n)
   return;
 }
 
-Node *file2tree(FILE *fp) {
-  char char_rule[RULE_LEN];
-  fgets(char_rule, RULE_LEN, fp);
+Node *char2tree(char char_rule[]) {
   char **value_string = my_strcut(char_rule, "[,]", NULL, NULL);
   int p = 0;
   Node *node_rule = create_tree(&p, value_string);
@@ -100,7 +98,7 @@ int calculate(Node *n, int height, int width)
   if (n->value[0] == 'C') {
     int h = n->value[1] - '2';
     int w = n->value[2] - '2';
-    if ((height + h >= 0 && height + h <= HEIGHT) && (width + w >= 0 && width + w <= WIDTH)) {
+    if ((height + h >= 0 && height + h < HEIGHT) && (width + w >= 0 && width + w < WIDTH)) {
       return cells[height + h][width + w];
     } else {
       return 0;
