@@ -1,0 +1,1 @@
+If[C22,If[Or[Eq[Plus[C11,Plus[C12,Plus[C13,Plus[C21,Plus[C23,Plus[C31,Plus[C32,C33]]]]]]],3],Eq[Plus[C11,Plus[C12,Plus[C13,Plus[C21,Plus[C23,Plus[C31,Plus[C32,C33]]]]]]],2]],1,0],If[Eq[Plus[C11,Plus[C12,Plus[C13,Plus[C21,Plus[C23,Plus[C31,Plus[C32,C33]]]]]]],3],1,0]]
